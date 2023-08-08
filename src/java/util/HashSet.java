@@ -271,19 +271,19 @@ public class HashSet<E>
      *             no particular order.
      */
     private void writeObject(java.io.ObjectOutputStream s)
-        throws java.io.IOException {
+        throws java.io.IOException {//序列化
         // Write out any hidden serialization magic
-        s.defaultWriteObject();
+        s.defaultWriteObject();//写入非静态属性,非transient 属性
 
         // Write out HashMap capacity and load factor
-        s.writeInt(map.capacity());
-        s.writeFloat(map.loadFactor());
+        s.writeInt(map.capacity());//写入table 数组大小
+        s.writeFloat(map.loadFactor());//写入负载因子
 
         // Write out size
-        s.writeInt(map.size());
+        s.writeInt(map.size()); //写入键值对的个数
 
         // Write out all elements in the proper order.
-        for (E e : map.keySet())
+        for (E e : map.keySet())//写入键值
             s.writeObject(e);
     }
 
