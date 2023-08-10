@@ -813,7 +813,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      *         (A <tt>null</tt> return can also indicate that the map
      *         previously associated <tt>null</tt> with <tt>key</tt>.)
      */
-    public V remove(Object key) {
+    public V remove(Object key) {  //HashMap 只有扩容，没有缩容的机制。
         Node<K,V> e;
         return (e = removeNode(hash(key), key, null, false, true)) == null ?
             null : e.value;
@@ -2181,7 +2181,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
             if (loHead != null) {
                 if (lc <= UNTREEIFY_THRESHOLD)
-                    tab[index] = loHead.untreeify(map);//如果
+                    tab[index] = loHead.untreeify(map);//如果红黑树退化为链表
                 else {
                     tab[index] = loHead;
                     if (hiHead != null) // (else is already treeified)
@@ -2190,7 +2190,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             }
             if (hiHead != null) {
                 if (hc <= UNTREEIFY_THRESHOLD)
-                    tab[index + bit] = hiHead.untreeify(map);
+                    tab[index + bit] = hiHead.untreeify(map);//如果红黑树退化为链表
                 else {
                     tab[index + bit] = hiHead;
                     if (loHead != null)

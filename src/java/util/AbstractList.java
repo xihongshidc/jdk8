@@ -510,9 +510,10 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * @return {@code true} if the specified object is equal to this list
      */
     public boolean equals(Object o) {
+        //如果是自己,直接返回相等,
         if (o == this)
             return true;
-        if (!(o instanceof List))
+        if (!(o instanceof List)) //如果不是List 类型,返回false
             return false;
 
         ListIterator<E> e1 = listIterator();
@@ -523,7 +524,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
             if (!(o1==null ? o2==null : o1.equals(o2)))
                 return false;
         }
-        return !(e1.hasNext() || e2.hasNext());
+        return !(e1.hasNext() || e2.hasNext());//到这里肯定有一个集合没有元素了, 或者两个都没有元素了.
     }
 
     /**
