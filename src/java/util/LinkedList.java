@@ -79,33 +79,34 @@ import java.util.function.Consumer;
  * @since 1.2
  * @param <E> the type of elements held in this collection
  */
-
+//不支持随机访问，Deque 提供双端队列的功能。
+    //redis List 就类似于LinkedList
 public class LinkedList<E>
-    extends AbstractSequentialList<E>
+    extends AbstractSequentialList<E>//不支持随机访问数据
     implements List<E>, Deque<E>, Cloneable, java.io.Serializable
 {
-    transient int size = 0;
+    transient int size = 0;//size  记录元素的个数
 
     /**
      * Pointer to first node.
      * Invariant: (first == null && last == null) ||
      *            (first.prev == null && first.item != null)
      */
-    transient Node<E> first;
+    transient Node<E> first;//first 指针 指向的是第一个Node节点
 
     /**
      * Pointer to last node.
      * Invariant: (first == null && last == null) ||
      *            (last.next == null && last.item != null)
      */
-    transient Node<E> last;
+    transient Node<E> last;// last指针 指向的是最后一个Node节点
 
     /**
      * Constructs an empty list.
      */
     public LinkedList() {
     }
-
+//构造方法可以看出LinkedList没有容量这一说. 也就不存在扩容这一说.
     /**
      * Constructs a list containing the elements of the specified
      * collection, in the order they are returned by the collection's
@@ -126,7 +127,7 @@ public class LinkedList<E>
         final Node<E> f = first; // 记录第一个node
         final Node<E> newNode = new Node<>(null, e, f); // 新建node，prev为null，next为之前记录的第一个node，item为传入的参数e
         first = newNode; // 第一个node指向新建的node：newNode
-        if (f == null)
+        if (f == null)  //原来的first节点为null 此时为空list
             last = newNode; // 如果记录的第一个node为null，说明原来的list为空list，将last也执行新建的node
         else
             f.prev = newNode; // 否则原来的first node的prev指向新建node
@@ -138,14 +139,16 @@ public class LinkedList<E>
      * Links e as last element.
      */
     void linkLast(E e) {
-        final Node<E> l = last;
-        final Node<E> newNode = new Node<>(l, e, null);
-        last = newNode;
-        if (l == null)
-            first = newNode;
+        final Node<E> l = last;//原来的last节点
+        final Node<E> newNode = new Node<>(l, e, null);//第一个参数是前一个节点是l,后一个节点是null
+        last = newNode;     // last 指向新节点,
+        if (l == null)      //如果原来的last节点为null,  说明此时链表为空,
+            first = newNode;//那么让第一个指针也指向新节点, 此时first 指向的是第一个节点,
         else
-            l.next = newNode;
+            l.next = newNode;//原来的last节点的下一个节点指向newNode
+        //增加链表大小
         size++;
+        //增加数组修改次数
         modCount++;
     }
 
@@ -154,6 +157,7 @@ public class LinkedList<E>
      */
     void linkBefore(E e, Node<E> succ) {
         // assert succ != null;
+        //succ 记录的当前位置上的节点,
         final Node<E> pred = succ.prev; // 记录succ的前一个node
         final Node<E> newNode = new Node<>(pred, e, succ); // 新建node，prev为succ的前一个node，next为succ
         succ.prev = newNode; // succ的prev指向新建node
@@ -177,7 +181,7 @@ public class LinkedList<E>
         f.next = null; // help GC // f的next至空
         first = next; // first指向原来第一个node的下一个node
         if (next == null)
-            last = null; // 如果next为空说明list为空列表，last也至空
+            last = null; // 如果next为空说明list为空列表，last也至空  表里没元素了
         else
             next.prev = null; // 否则next node的prev至空
         size--; // list元素大小-1
@@ -196,9 +200,9 @@ public class LinkedList<E>
         l.prev = null; // help GC
         last = prev;
         if (prev == null)
-            first = null;
+            first = null;//说明没有元素了
         else
-            prev.next = null;
+            prev.next = null;// l 的next指针指向 null
         size--;
         modCount++;
         return element;
@@ -214,11 +218,11 @@ public class LinkedList<E>
         final Node<E> next = x.next;
         final Node<E> prev = x.prev;
 
-        if (prev == null) {
+        if (prev == null) {//删除的是头结点
             first = next; // 指定node的前一个node为null，说明该node为第一个node，将first指向node的next
         } else {
             prev.next = next; // 否则指定node的前一个node的next指针指向指定node的next node
-            x.prev = null; // 指定node的prev指针至空
+            x.prev = null; // 指定node的prev指针至空 ,断开x的前置指针
         }
 
         if (next == null) {
@@ -337,6 +341,7 @@ public class LinkedList<E>
      * @return {@code true} (as specified by {@link Collection#add})
      */
     public boolean add(E e) {
+        //队尾添加元素
         linkLast(e);
         return true;
     }
@@ -408,17 +413,17 @@ public class LinkedList<E>
         checkPositionIndex(index); // 检查指定位置是否越界
 
         Object[] a = c.toArray(); // 将给定集合转换成数组
-        int numNew = a.length; // 获取给定集合长度
+        int numNew = a.length; // 获取给定集合长度(需要添加的元素个数)
         if (numNew == 0)
-            return false;
-
+            return false;       //不需要添加元素
+        //pred 记录的是原来index位置前面的节点,succ 记录的是原来index位置上的节点,
         Node<E> pred, succ;
         if (index == size) { // 指定的插入位置为list最后
             succ = null; // 当前元素设置为null
-            pred = last; // prev设置为last
+            pred = last; // prev设置为last (原来的last节点)
         } else {
             succ = node(index); // 遍历链表查出当前node，这里需要遍历链表，因此相对耗时
-            pred = succ.prev; // prev设置为当前node的prev
+            pred = succ.prev; // prev设置为当前node的prev (记录的是原来的index位置上的前一个节点,)
         }
 
         for (Object o : a) { // 循环要加入的数组
@@ -434,7 +439,7 @@ public class LinkedList<E>
         if (succ == null) { // 在链表的最后插入新集合
             last = pred; // last设置为新集合的最后一个元素
         } else {
-            pred.next = succ; // 否则新插入集合最后一个元素node的next指向succ
+            pred.next = succ; // 否则新插入集合的最后一个元素node的next指向succ
             succ.prev = pred; // succ的prev指向新插入集合最后一个元素
         }
 
@@ -452,7 +457,7 @@ public class LinkedList<E>
         // - helps a generational GC if the discarded nodes inhabit
         //   more than one generation
         // - is sure to free memory even if there is a reachable Iterator
-        for (Node<E> x = first; x != null; ) {
+        for (Node<E> x = first; x != null; ) {  // 遍历链表 让他的指针都断开,并且附上元素的值为null
             Node<E> next = x.next;
             x.item = null;
             x.next = null;
@@ -511,6 +516,7 @@ public class LinkedList<E>
         if (index == size)
             linkLast(element); // 指定位置为列表最后一个位置直接插入
         else
+            //先调用node(index) 找到第index 位置的Node节点node,
             linkBefore(element, node(index)); // 遍历找到指定位置的元素，并在该元素前插入指定元素
     }
 
@@ -525,7 +531,7 @@ public class LinkedList<E>
      */
     public E remove(int index) {
         checkElementIndex(index);
-        return unlink(node(index));
+        return unlink(node(index));//通过node(index) 查找Node节点, 然后进行移除.
     }
 
     /**
@@ -567,7 +573,7 @@ public class LinkedList<E>
      */
     Node<E> node(int index) {
         // assert isElementIndex(index);
-
+        //索引都说从0开始的.
         if (index < (size >> 1)) { // index位置在前半部分从前向后遍历
             Node<E> x = first;
             for (int i = 0; i < index; i++)
@@ -694,7 +700,7 @@ public class LinkedList<E>
      * @return {@code true} (as specified by {@link Queue#offer})
      * @since 1.5
      */
-    public boolean offer(E e) {
+    public boolean offer(E e) { //队尾添加元素,
         return add(e);
     }
 
@@ -706,7 +712,7 @@ public class LinkedList<E>
      * @return {@code true} (as specified by {@link Deque#offerFirst})
      * @since 1.6
      */
-    public boolean offerFirst(E e) {
+    public boolean offerFirst(E e) {//Deque 方法实现
         addFirst(e);
         return true;
     }
@@ -718,7 +724,7 @@ public class LinkedList<E>
      * @return {@code true} (as specified by {@link Deque#offerLast})
      * @since 1.6
      */
-    public boolean offerLast(E e) {
+    public boolean offerLast(E e) {//Deque 方法实现
         addLast(e);
         return true;
     }
@@ -731,7 +737,7 @@ public class LinkedList<E>
      *         if this list is empty
      * @since 1.6
      */
-    public E peekFirst() {
+    public E peekFirst() {//Deque 方法实现
         final Node<E> f = first;
         return (f == null) ? null : f.item;
      }
@@ -744,7 +750,7 @@ public class LinkedList<E>
      *         if this list is empty
      * @since 1.6
      */
-    public E peekLast() {
+    public E peekLast() {//Deque 方法实现
         final Node<E> l = last;
         return (l == null) ? null : l.item;
     }
@@ -784,7 +790,7 @@ public class LinkedList<E>
      * @param e the element to push
      * @since 1.6
      */
-    public void push(E e) {
+    public void push(E e) {//  对头添加元素
         addFirst(e);
     }
 
@@ -972,7 +978,7 @@ public class LinkedList<E>
     }
 
     private static class Node<E> {
-        E item;
+        E item; //
         Node<E> next;
         Node<E> prev;
 
@@ -1052,8 +1058,9 @@ public class LinkedList<E>
      *         in proper sequence
      */
     public Object[] toArray() {
-        Object[] result = new Object[size];
+        Object[] result = new Object[size];//创建数组
         int i = 0;
+        //遍历节点
         for (Node<E> x = first; x != null; x = x.next)
             result[i++] = x.item;
         return result;
@@ -1100,14 +1107,16 @@ public class LinkedList<E>
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
         if (a.length < size)
+            //如果传入的数组小于size 大小 反射创建一个新的数组
             a = (T[])java.lang.reflect.Array.newInstance(
                                 a.getClass().getComponentType(), size);
         int i = 0;
         Object[] result = a;
+        //遍历 链表 ,复制到a中
         for (Node<E> x = first; x != null; x = x.next)
             result[i++] = x.item;
 
-        if (a.length > size)
+        if (a.length > size)//如果传入的数组大小大于size, 则将size 赋值为null
             a[size] = null;
 
         return a;
@@ -1126,6 +1135,7 @@ public class LinkedList<E>
     private void writeObject(java.io.ObjectOutputStream s)
         throws java.io.IOException {
         // Write out any hidden serialization magic
+        // 写入非静态属性、非 transient 属性
         s.defaultWriteObject();
 
         // Write out size
@@ -1144,12 +1154,14 @@ public class LinkedList<E>
     private void readObject(java.io.ObjectInputStream s)
         throws java.io.IOException, ClassNotFoundException {
         // Read in any hidden serialization magic
+        //读取非静态属性, 非transient 属性.
         s.defaultReadObject();
 
         // Read in size
         int size = s.readInt();
 
         // Read in all elements in the proper order.
+        // 顺序遍历，逐个反序列化
         for (int i = 0; i < size; i++)
             linkLast((E)s.readObject());
     }

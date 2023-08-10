@@ -363,14 +363,15 @@ public class ObjectInputStream
     public final Object readObject()
         throws IOException, ClassNotFoundException
     {
-        if (enableOverride) {
+        if (enableOverride) {//判断是否重写readObject 方法
             return readObjectOverride();
         }
 
         // if nested read, passHandle contains handle of enclosing object
         int outerHandle = passHandle;
         try {
-            Object obj = readObject0(false);
+            //
+            Object obj = readObject0(false);// 主要的反序列化方法.
             handles.markDependency(outerHandle, passHandle);
             ClassNotFoundException ex = handles.lookupException(passHandle);
             if (ex != null) {
@@ -1325,7 +1326,7 @@ public class ObjectInputStream
 
         depth++;
         try {
-            switch (tc) {
+            switch (tc) {// 选择反序列化方式
                 case TC_NULL:
                     return readNull();
 
@@ -1349,7 +1350,7 @@ public class ObjectInputStream
                 case TC_ENUM:
                     return checkResolve(readEnum(unshared));
 
-                case TC_OBJECT:
+                case TC_OBJECT: //对象类型的反序列化
                     return checkResolve(readOrdinaryObject(unshared));
 
                 case TC_EXCEPTION:
@@ -1789,7 +1790,7 @@ public class ObjectInputStream
 
         Object obj;
         try {
-            obj = desc.isInstantiable() ? desc.newInstance() : null;
+            obj = desc.isInstantiable() ? desc.newInstance() : null;// 创建对象
         } catch (Exception ex) {
             throw (IOException) new InvalidClassException(
                 desc.forClass().getName(),
@@ -1802,7 +1803,7 @@ public class ObjectInputStream
             handles.markException(passHandle, resolveEx);
         }
 
-        if (desc.isExternalizable()) {
+        if (desc.isExternalizable()) {  // 判断序列化方式
             readExternalData((Externalizable) obj, desc);
         } else {
             readSerialData(obj, desc);
@@ -1812,7 +1813,7 @@ public class ObjectInputStream
 
         if (obj != null &&
             handles.lookupException(passHandle) == null &&
-            desc.hasReadResolveMethod())
+            desc.hasReadResolveMethod())    //3. 判断是否包含readResolve方法
         {
             Object rep = desc.invokeReadResolve(obj);
             if (unshared && rep.getClass().isArray()) {
