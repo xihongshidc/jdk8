@@ -324,7 +324,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
     public boolean offer(E e) {
         checkNotNull(e);
         final ReentrantLock lock = this.lock;
-        lock.lock();
+        lock.lock();    //lock
         try {
             if (count == items.length)
                 return false;
@@ -347,7 +347,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
     public void put(E e) throws InterruptedException {
         checkNotNull(e);
         final ReentrantLock lock = this.lock;
-        lock.lockInterruptibly();
+        lock.lockInterruptibly(); // 可中断锁和 lock.lock() 锁不冲突
         try {
             while (count == items.length)
                 notFull.await();
@@ -408,13 +408,13 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
     }
 
     public E poll(long timeout, TimeUnit unit) throws InterruptedException {
-        long nanos = unit.toNanos(timeout);
+        long nanos = unit.toNanos(timeout);//将时间转换为纳秒.
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
             while (count == 0) {
                 if (nanos <= 0)
-                    return null;
+                    return null;//返回空
                 nanos = notEmpty.awaitNanos(nanos);
             }
             return dequeue();

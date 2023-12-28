@@ -609,6 +609,7 @@ public class Executors {
         }
 
         public Thread newThread(Runnable r) {
+            // 线程池默认的线程工厂, 通过new Thread()  创建了Thread 对象. 在调用start() 然后启动了一个线程.
             Thread t = new Thread(group, r,
                                   namePrefix + threadNumber.getAndIncrement(),
                                   0);

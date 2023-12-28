@@ -179,13 +179,13 @@ class Thread implements Runnable {
 
     /* ThreadLocal values pertaining to this thread. This map is maintained
      * by the ThreadLocal class. */
-    ThreadLocal.ThreadLocalMap threadLocals = null;
+    ThreadLocal.ThreadLocalMap threadLocals = null; //保存本地变量
 
     /*
      * InheritableThreadLocal values pertaining to this thread. This map is
      * maintained by the InheritableThreadLocal class.
      */
-    ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;
+    ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;//  保存可继承的线程本地变量..
 
     /*
      * The requested stack size for this thread, or 0 if the creator did
@@ -368,7 +368,7 @@ class Thread implements Runnable {
 
         this.name = name;
 
-        Thread parent = currentThread();
+        Thread parent = currentThread();//获取到父线程, 当前线程
         SecurityManager security = System.getSecurityManager();
         if (g == null) {
             /* Determine if it's an applet or not */
@@ -412,9 +412,9 @@ class Thread implements Runnable {
                 acc != null ? acc : AccessController.getContext();
         this.target = target;
         setPriority(priority);
-        if (parent.inheritableThreadLocals != null)
+        if (parent.inheritableThreadLocals != null)// 判断父类的这个属性有什么值.
             this.inheritableThreadLocals =
-                ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);
+                ThreadLocal.createInheritedMap(parent.inheritableThreadLocals); //线程创建的时候会 初始化这个inheritableThreadLocals
         /* Stash the specified stack size in case the VM cares */
         this.stackSize = stackSize;
 

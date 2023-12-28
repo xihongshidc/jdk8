@@ -1,0 +1,38 @@
+/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+.txlcn
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+**/logs/
+
+package-lock.json
+*.iml
+
+#mac
+.DS_Store
+**/.DS_Store
+
+#mvn
+./mvn
+mvnw
+mvnw.cmd
+
