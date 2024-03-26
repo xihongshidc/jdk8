@@ -1993,7 +1993,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * @param t the exception that caused termination, or null if
      * execution completed normally
      */
-    protected void afterExecute(Runnable r, Throwable t) { } // 线程池后置处理方法.
+    protected void afterExecute(Runnable r, Throwable t) { } // 线程池后置处理方法.  抛异常也会执行这里面的逻辑...
 
     /**
      * Method invoked when the Executor has terminated.  Default

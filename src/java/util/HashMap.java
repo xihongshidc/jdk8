@@ -293,6 +293,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         public final String toString() { return key + "=" + value; }
 
         public final int hashCode() {
+            //null key 是可以被hash的
             return Objects.hashCode(key) ^ Objects.hashCode(value);
         }
 
@@ -334,6 +335,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * never be used in index calculations because of table bounds.
      */
     static final int hash(Object key) {
+        //key 是可以为null的，
         int h;
         //key.hashCode()获取的是对象的哈希码值,是一个整数值, h>>>16 是位运算,向右移动16位,获得h的高位部分,
         // ^ 异或 , 也就是将他的高8位和低8位进行异或. 不进位相加.
@@ -661,7 +663,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k)))) //这里有一个问题,hashcode 码相等,但是key不一定相等.如果key相等,那么hashcode 一定得相等.
                         // HashMap 是根据hashcode 去寻找的下标的, 如果只重写equals 但是不重写 hashcode, 在这个地方就不会 执行break 了.会出现重复key (两个key是一样的,但是hashcode 不一样.)
-                        break;
+                        break;  //根据key的hash值 对数组节点取模, 获取到node节点. 然后比较node节点的key值和需要存入的key值的hashcode  是否相等, 地址引用是否相等. equals 是否相等.
+
                     p = e; //不相等, 将p指向e
                 }
             }

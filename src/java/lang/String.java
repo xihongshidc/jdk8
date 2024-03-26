@@ -1462,6 +1462,8 @@ public final class String
      *
      * @return  a hash code value for this object.
      */
+    //重写后的hashcode 值(提高了内存检索对象的效率) , 不是对象的真实地址值. 对象多数都是new 出来的, 他在内存中的地址 可以不一样的. 重写hashcode 可以使多个同类型的且参数相同的对象hashcode 一致.
+    // 重写equals 同样是为了保证两个对象的相等.
     public int hashCode() {
         int h = hash;
         if (h == 0 && value.length > 0) {
@@ -1923,6 +1925,7 @@ public final class String
      *             length of this {@code String} object.
      */
     public String substring(int beginIndex) {
+        //从beginIndex 开始截取
         if (beginIndex < 0) {
             throw new StringIndexOutOfBoundsException(beginIndex);
         }
@@ -1956,6 +1959,7 @@ public final class String
      *             {@code endIndex}.
      */
     public String substring(int beginIndex, int endIndex) {
+        //截取beginIndex ，endIndex 的字符串
         if (beginIndex < 0) {
             throw new StringIndexOutOfBoundsException(beginIndex);
         }

@@ -852,6 +852,10 @@ public class SynchronousQueue<E> extends AbstractQueue<E>
      * Creates a {@code SynchronousQueue} with nonfair access policy.
      */
     public SynchronousQueue() {
+        // 这是一个队列长度为0的 同步队列，也就是一个线程添加完一个数据必须等待，
+        // 另一个线程来获取这个任务才行，或者刚好有一个线程在等待获取这个任务，
+        // 支持多个线程插入,但是插入的线程都会被阻塞,直到有人来取
+        //直接添加 add 或者 offer 是失败的，
         this(false);
     }
 
@@ -862,6 +866,7 @@ public class SynchronousQueue<E> extends AbstractQueue<E>
      *        access; otherwise the order is unspecified.
      */
     public SynchronousQueue(boolean fair) {
+        //转换器， 如果为公平 的那么是基于队列实现的，如果是非公平的，  那么基于栈进行实现栈先进后出 本身就是非公平的, 线程1 \线程2同时put , 非公平的,
         transferer = fair ? new TransferQueue<E>() : new TransferStack<E>();
     }
 
