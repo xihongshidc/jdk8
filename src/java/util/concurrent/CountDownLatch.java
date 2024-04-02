@@ -154,6 +154,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * @author Doug Lea
  */
 public class CountDownLatch {
+    //闭锁, 线程等待其他线程完成,
     /**
      * Synchronization control For CountDownLatch.
      * Uses AQS state to represent count.

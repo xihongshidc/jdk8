@@ -51,7 +51,7 @@ public class AtomicMarkableReference<V> {
 
     private static class Pair<T> {
         final T reference;
-        final boolean mark;
+        final boolean mark;//标记是否被修改过,
         private Pair(T reference, boolean mark) {
             this.reference = reference;
             this.mark = mark;

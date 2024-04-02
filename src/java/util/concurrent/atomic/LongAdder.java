@@ -115,7 +115,7 @@ public class LongAdder extends Striped64 implements Serializable {
      *
      * @return the sum
      */
-    public long sum() {
+    public long sum() {//获取到的是估计值,不是准确的值
         Cell[] as = cells; Cell a;
         long sum = base;
         if (as != null) {

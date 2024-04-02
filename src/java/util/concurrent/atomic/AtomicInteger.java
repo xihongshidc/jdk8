@@ -132,6 +132,10 @@ public class AtomicInteger extends Number implements java.io.Serializable {
     public final boolean compareAndSet(int expect, int update) {
         return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
     }
+    //CAS 问题: 1) ABA ,  2)大量线程修改可能造成多数线程失败性能消耗大, 3) 只能对一个变量进行原子操作,
+    //CAS 是利用CPU的原子操作完成的.
+    // 死锁, 多线程不是顺序竞争多个锁资源, 持有锁的对象不对锁资源释放,
+    // 活锁, 线程处于runnable 状态但是不做事
 
     /**
      * Atomically sets the value to the given updated value

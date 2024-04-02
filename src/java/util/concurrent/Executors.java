@@ -256,6 +256,7 @@ public class Executors {
     }
 
     /**
+     * //创建单一核心现成的线程线程池支持任务定时执行,周期执行,
      * Creates a single-threaded executor that can schedule commands
      * to run after a given delay, or to execute periodically.  (Note
      * however that if this single thread terminates due to a failure
@@ -277,6 +278,7 @@ public class Executors {
     }
 
     /**
+     * 创建一个固定核心线程的线程池, 支持定时或者周期性执行某个任务,
      * Creates a thread pool that can schedule commands to run after a
      * given delay, or to execute periodically.
      * @param corePoolSize the number of threads to keep in the pool,

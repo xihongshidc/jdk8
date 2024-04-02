@@ -154,6 +154,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * @author Doug Lea
  */
 public class Semaphore implements java.io.Serializable {
+    //信号量, 共享锁,
     private static final long serialVersionUID = -3222578661600680210L;
     /** All mechanics via AbstractQueuedSynchronizer subclass */
     private final Sync sync;
@@ -308,7 +309,7 @@ public class Semaphore implements java.io.Serializable {
      *
      * @throws InterruptedException if the current thread is interrupted
      */
-    public void acquire() throws InterruptedException {
+    public void acquire() throws InterruptedException {//阻塞式
         sync.acquireSharedInterruptibly(1);
     }
 
@@ -359,7 +360,7 @@ public class Semaphore implements java.io.Serializable {
      * @return {@code true} if a permit was acquired and {@code false}
      *         otherwise
      */
-    public boolean tryAcquire() {
+    public boolean tryAcquire() {//非阻塞式
         return sync.nonfairTryAcquireShared(1) >= 0;
     }
 

@@ -145,7 +145,7 @@ abstract class Striped64 extends Number {
     /**
      * Table of cells. When non-null, size is a power of 2.
      */
-    transient volatile Cell[] cells;
+    transient volatile Cell[] cells;//写扩散思想
 
     /**
      * Base value, used mainly when there is no contention, but also as

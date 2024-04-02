@@ -297,7 +297,7 @@ public class LinkedHashMap<K,V>
     void afterNodeInsertion(boolean evict) { // possibly remove eldest
         LinkedHashMap.Entry<K,V> first;
         if (evict && (first = head) != null && removeEldestEntry(first)) {
-            K key = first.key;
+            K key = first.key;//头结点
             removeNode(hash(key), key, null, false, true);
         }
     }

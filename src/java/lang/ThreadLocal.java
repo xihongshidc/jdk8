@@ -464,7 +464,7 @@ public class ThreadLocal<T> {
 
             for (Entry e = tab[i];
                  e != null;
-                 e = tab[i = nextIndex(i, len)]) {
+                 e = tab[i = nextIndex(i, len)]) {// 发生hash冲突,采用的是线性探测,往后找下一位
                 ThreadLocal<?> k = e.get();
 
                 if (k == key) {
