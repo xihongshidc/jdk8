@@ -128,6 +128,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
          * subclasses, but both need nonfair try for trylock method.
          */
         final boolean nonfairTryAcquire(int acquires) {
+            // 非公平锁如果需要重复获取锁会走下面这个逻辑.
             final Thread current = Thread.currentThread();
             int c = getState();
             if (c == 0) {
@@ -146,6 +147,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
             return false;
         }
 
+        //如果多次调用lock 也要多次调用unlock 才能解锁.
         protected final boolean tryRelease(int releases) {
             int c = getState() - releases;
             if (Thread.currentThread() != getExclusiveOwnerThread())
@@ -230,6 +232,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
          * recursive call or no waiters or is first.
          */
         protected final boolean tryAcquire(int acquires) {
+            //公平锁尝试获获取锁
             final Thread current = Thread.currentThread();
             int c = getState();
             if (c == 0) {
@@ -240,6 +243,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
                 }
             }
             else if (current == getExclusiveOwnerThread()) {
+                //支持可重入
                 int nextc = c + acquires;
                 if (nextc < 0)
                     throw new Error("Maximum lock count exceeded");

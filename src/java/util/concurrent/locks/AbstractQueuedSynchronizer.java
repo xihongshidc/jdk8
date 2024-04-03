@@ -584,12 +584,12 @@ public abstract class AbstractQueuedSynchronizer
         for (;;) {
             Node t = tail;
             if (t == null) { // Must initialize
-                if (compareAndSetHead(new Node()))
+                if (compareAndSetHead(new Node())) //设置头结点 代表获取锁的节点,
                     tail = head;
             } else {
-                node.prev = t;
-                if (compareAndSetTail(t, node)) {
-                    t.next = node;
+                node.prev = t; //构建链表
+                if (compareAndSetTail(t, node)) {//设置尾节点
+                    t.next = node; //构建链表
                     return t;
                 }
             }
@@ -613,6 +613,7 @@ public abstract class AbstractQueuedSynchronizer
                 return node;
             }
         }
+        //构建队列
         enq(node);
         return node;
     }
@@ -651,9 +652,9 @@ public abstract class AbstractQueuedSynchronizer
          * traverse backwards from tail to find the actual
          * non-cancelled successor.
          */
-        Node s = node.next;
-        if (s == null || s.waitStatus > 0) {
-            s = null;
+        Node s = node.next;// 唤醒的是头结点后面的节点,
+        if (s == null || s.waitStatus > 0) {//这个waitStatus 是-1 才是等待被唤醒,
+            s = null; //如果头结点的下一个节点还不是等待被唤起, 就从最尾部开始找,
             for (Node t = tail; t != null && t != node; t = t.prev)
                 if (t.waitStatus <= 0)
                     s = t;
@@ -833,7 +834,7 @@ public abstract class AbstractQueuedSynchronizer
      * @return {@code true} if interrupted
      */
     private final boolean parkAndCheckInterrupt() {
-        LockSupport.park(this);
+        LockSupport.park(this);//现成被阻塞在这 ,等待被唤醒
         return Thread.interrupted();
     }
 
@@ -860,12 +861,13 @@ public abstract class AbstractQueuedSynchronizer
             boolean interrupted = false;
             for (;;) {
                 final Node p = node.predecessor();
-                if (p == head && tryAcquire(arg)) {
+                if (p == head && tryAcquire(arg)) {//获取锁成功那么就设置为头节点, 并释放之前的头结点
                     setHead(node);
                     p.next = null; // help GC
                     failed = false;
                     return interrupted;
                 }
+                //获取锁失败就在下面被挂起
                 if (shouldParkAfterFailedAcquire(p, node) &&
                     parkAndCheckInterrupt())
                     interrupted = true;
@@ -1134,7 +1136,7 @@ public abstract class AbstractQueuedSynchronizer
      *         correctly.
      * @throws UnsupportedOperationException if shared mode is not supported
      */
-    protected int tryAcquireShared(int arg) {
+    protected int tryAcquireShared(int arg) {//共享锁  CountDownLatch 以及信号量都实现了这个方法，
         throw new UnsupportedOperationException();
     }
 
