@@ -189,6 +189,8 @@ import java.util.concurrent.locks.LockSupport;
  * @author Doug Lea
  */
 public class StampedLock implements java.io.Serializable {
+    //乐观读, 底层就是靠cas  比较版本号是否被修改,如果修改的话需要去获取悲观读锁, 读是乐观读,但是需要比较版本号,如果版本号变化了,说明当前数据被修改了,
+    //不支持可重入
     /*
      * Algorithmic notes:
      *

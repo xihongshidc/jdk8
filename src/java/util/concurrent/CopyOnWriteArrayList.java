@@ -96,7 +96,7 @@ public class CopyOnWriteArrayList<E>
     final transient ReentrantLock lock = new ReentrantLock();
 
     /** The array, accessed only via getArray/setArray. */
-    private transient volatile Object[] array;
+    private transient volatile Object[] array; // volatile 保证了 数组扩容或者缩容的可见性
 
     /**
      * Gets the array.  Non-private so as to also be accessible
@@ -109,7 +109,7 @@ public class CopyOnWriteArrayList<E>
     /**
      * Sets the array.
      */
-    final void setArray(Object[] a) {
+    final void  setArray(Object[] a) {
         array = a;
     }
 
@@ -431,6 +431,7 @@ public class CopyOnWriteArrayList<E>
      * @return {@code true} (as specified by {@link Collection#add})
      */
     public boolean add(E e) {
+        //适用于读多写少,
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {

@@ -358,7 +358,7 @@ public class Hashtable<K,V>
      * @see     #put(Object, Object)
      */
     @SuppressWarnings("unchecked")
-    public synchronized V get(Object key) {
+    public synchronized V get(Object key) { //同步容器,通过synchronized 实现, 但是粒度太大了, 读读之间并不会产生线程安全问题,
         Entry<?,?> tab[] = table;
         int hash = key.hashCode();
         int index = (hash & 0x7FFFFFFF) % tab.length;
