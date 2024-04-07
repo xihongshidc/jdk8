@@ -249,7 +249,7 @@ public class Semaphore implements java.io.Serializable {
                 int remaining = available - acquires;
                 if (remaining < 0 ||
                     compareAndSetState(available, remaining))
-                    return remaining;
+                    return remaining; //remaining大于等于0 表示获取共享锁成功了,
             }
         }
     }
