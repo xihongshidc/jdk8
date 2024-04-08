@@ -94,10 +94,10 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
     final Object[] items;
 
     /** items index for next take, poll, peek or remove */
-    int takeIndex;
+    int takeIndex;//出队指针
 
     /** items index for next put, offer, or add */
-    int putIndex;
+    int putIndex;//入队指针
 
     /** Number of elements in the queue */
     int count;
@@ -108,7 +108,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      */
 
     /** Main lock guarding all access */
-    final ReentrantLock lock;
+    final ReentrantLock lock;//存取互斥
 
     /** Condition for waiting takes */
     private final Condition notEmpty;
@@ -160,7 +160,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
         final Object[] items = this.items;
         items[putIndex] = x;
         if (++putIndex == items.length)
-            putIndex = 0;
+            putIndex = 0; //环形数组
         count++;
         notEmpty.signal();
     }
@@ -350,7 +350,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
         lock.lockInterruptibly(); // 可中断锁和 lock.lock() 锁不冲突
         try {
             while (count == items.length)
-                notFull.await();
+                notFull.await();// 阻塞当前线程
             enqueue(e);
         } finally {
             lock.unlock();
@@ -441,7 +441,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * @return the number of elements in this queue
      */
     public int size() {
-        final ReentrantLock lock = this.lock;
+        final ReentrantLock lock = this.lock; // 加锁保证
         lock.lock();
         try {
             return count;

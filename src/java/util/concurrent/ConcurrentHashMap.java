@@ -345,7 +345,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
      * 5:    0.00015795
      * 6:    0.00001316
      * 7:    0.00000094
-     * 8:    0.00000006
+     * 8:    0.00000006 哈希冲突8次的概率千万分之1
      * more: less than 1 in ten million
      *
      * Lock contention probability for two threads accessing distinct
@@ -1010,7 +1010,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
     final V putVal(K key, V value, boolean onlyIfAbsent) {
         //key、value 不可以为null  避免二义性，保证了ConcurrentHashmap是线程安全的
         if (key == null || value == null) throw new NullPointerException();
-        int hash = spread(key.hashCode());
+        int hash = spread(key.hashCode());//如果重写hashCode 方法
         int binCount = 0;
         for (Node<K,V>[] tab = table;;) {
             Node<K,V> f; int n, i, fh;
@@ -1025,7 +1025,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
                 tab = helpTransfer(tab, f);
             else {
                 V oldVal = null;
-                synchronized (f) {
+                synchronized (f) {//对链表头结点加锁
                     if (tabAt(tab, i) == f) {
                         if (fh >= 0) {
                             binCount = 1;
@@ -1041,6 +1041,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
                                 }
                                 Node<K,V> pred = e;
                                 if ((e = e.next) == null) {
+                                    //链表
                                     pred.next = new Node<K,V>(hash, key,
                                                               value, null);
                                     break;
@@ -1060,7 +1061,7 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
                     }
                 }
                 if (binCount != 0) {
-                    if (binCount >= TREEIFY_THRESHOLD)
+                    if (binCount >= TREEIFY_THRESHOLD)//(条件1) 链表长度达到阈值8
                         treeifyBin(tab, i);
                     if (oldVal != null)
                         return oldVal;
@@ -1368,12 +1369,14 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
      * Stripped-down version of helper class used in previous version,
      * declared for the sake of serialization compatibility
      */
-    static class Segment<K,V> extends ReentrantLock implements Serializable {
+    static class Segment<K,V> extends ReentrantLock implements Serializable {//分段锁, 有效的分散了写请求的,对于没有竞争的写请求不会阻塞其执行
         private static final long serialVersionUID = 2249069246763182397L;
         final float loadFactor;
         Segment(float lf) { this.loadFactor = lf; }
     }
+    //ConcurrentHashmap jdk 1.7  是Segment数组 + HashEntry 数组+ 链表实现,Segment数组 负责分散写请求,对写请求加锁, 相比较Hashtable 他减小了锁粒度
 
+    //分段思想 :  写分散
     /**
      * Saves the state of the {@code ConcurrentHashMap} instance to a
      * stream (i.e., serializes it).
@@ -2224,9 +2227,9 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
     private final Node<K,V>[] initTable() {
         Node<K,V>[] tab; int sc;
         while ((tab = table) == null || tab.length == 0) {
-            if ((sc = sizeCtl) < 0)
+            if ((sc = sizeCtl) < 0)//多线程进行初始化的时候 只能有一个线程执行初始化操作, 其他线程会放弃竞争cpu
                 Thread.yield(); // lost initialization race; just spin
-            else if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {
+            else if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {//这里将sizeCtl 变量改为了-1
                 try {
                     if ((tab = table) == null || tab.length == 0) {
                         int n = (sc > 0) ? sc : DEFAULT_CAPACITY;
@@ -2612,9 +2615,9 @@ public class ConcurrentHashMap<K,V> extends AbstractMap<K,V>
     private final void treeifyBin(Node<K,V>[] tab, int index) {
         Node<K,V> b; int n, sc;
         if (tab != null) {
-            if ((n = tab.length) < MIN_TREEIFY_CAPACITY)
+            if ((n = tab.length) < MIN_TREEIFY_CAPACITY)// (条件2)容量值小于 64 那么就扩容
                 tryPresize(n << 1);
-            else if ((b = tabAt(tab, index)) != null && b.hash >= 0) {
+            else if ((b = tabAt(tab, index)) != null && b.hash >= 0) { // 转红黑树
                 synchronized (b) {
                     if (tabAt(tab, index) == b) {
                         TreeNode<K,V> hd = null, tl = null;

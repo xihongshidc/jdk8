@@ -83,6 +83,7 @@ import java.util.Spliterators;
  */
 public class SynchronousQueue<E> extends AbstractQueue<E>
     implements BlockingQueue<E>, java.io.Serializable {
+    //数据转换 队列， 一个生产者线程对应一个消费者线程， 生产者会等待消费者去转换获取数据，才放开阻塞
     private static final long serialVersionUID = -3223113410248163686L;
 
     /*

@@ -71,7 +71,7 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
     implements BlockingQueue<E> {
 
     private final transient ReentrantLock lock = new ReentrantLock();
-    private final PriorityQueue<E> q = new PriorityQueue<E>();
+    private final PriorityQueue<E> q = new PriorityQueue<E>();//优先级队列
 
     /**
      * Thread designated to wait for the element at the head of
@@ -138,7 +138,7 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
         lock.lock();
         try {
             q.offer(e);
-            if (q.peek() == e) {
+            if (q.peek() == e) {//拿到队列的第一个元素，
                 leader = null;
                 available.signal();
             }
@@ -208,11 +208,11 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
             for (;;) {
                 E first = q.peek();
                 if (first == null)
-                    available.await();
+                    available.await();//阻塞
                 else {
                     long delay = first.getDelay(NANOSECONDS);
                     if (delay <= 0)
-                        return q.poll();
+                        return q.poll();//获取队头元素并弹出队
                     first = null; // don't retain ref while waiting
                     if (leader != null)
                         available.await();
@@ -220,7 +220,7 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
                         Thread thisThread = Thread.currentThread();
                         leader = thisThread;
                         try {
-                            available.awaitNanos(delay);
+                            available.awaitNanos(delay); //等delay 时间过去，
                         } finally {
                             if (leader == thisThread)
                                 leader = null;
@@ -229,7 +229,7 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
                 }
             }
         } finally {
-            if (leader == null && q.peek() != null)
+            if (leader == null && q.peek() != null)//peek 只获取队头元素，
                 available.signal();
             lock.unlock();
         }

@@ -152,7 +152,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
     private transient Node<E> last;
 
     /** Lock held by take, poll, etc */
-    private final ReentrantLock takeLock = new ReentrantLock();
+    private final ReentrantLock takeLock = new ReentrantLock();//读写锁分离了 ， 因此put 和take 不互斥了
 
     /** Wait queue for waiting takes */
     private final Condition notEmpty = takeLock.newCondition();
@@ -198,7 +198,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
     private void enqueue(Node<E> node) {
         // assert putLock.isHeldByCurrentThread();
         // assert last.next == null;
-        last = last.next = node;
+        last = last.next = node;//入队 在队尾添加node 节点
     }
 
     /**
@@ -211,11 +211,11 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         // assert head.item == null;
         Node<E> h = head;
         Node<E> first = h.next;
-        h.next = h; // help GC
-        head = first;
+        h.next = h; // help GC   将h.next 指向自己了， 断开了与first 的连接， 进而帮助GC
+        head = first; // 让 first节点指向了head节点
         E x = first.item;
         first.item = null;
-        return x;
+        return x;//返回的是头节点
     }
 
     /**
@@ -356,7 +356,7 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             putLock.unlock();
         }
-        if (c == 0)
+        if (c == 0)//原始队列没有元素，如果插入一个元素 ，唤醒那个等待拿取元素的线程
             signalNotEmpty();
     }
 
@@ -439,16 +439,16 @@ public class LinkedBlockingQueue<E> extends AbstractQueue<E>
         takeLock.lockInterruptibly();
         try {
             while (count.get() == 0) {
-                notEmpty.await();
+                notEmpty.await(); //取元素阻塞
             }
             x = dequeue();
-            c = count.getAndDecrement();
+            c = count.getAndDecrement();//获取的是目前的数量，
             if (c > 1)
                 notEmpty.signal();
         } finally {
             takeLock.unlock();
         }
-        if (c == capacity)
+        if (c == capacity)// 队列满了，本次取玩元素，可以唤醒那个 put 阻塞的线程
             signalNotFull();
         return x;
     }
