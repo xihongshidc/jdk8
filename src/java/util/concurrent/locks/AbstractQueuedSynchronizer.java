@@ -2038,7 +2038,7 @@ public abstract class AbstractQueuedSynchronizer
             int savedState = fullyRelease(node);
             int interruptMode = 0;
             while (!isOnSyncQueue(node)) {
-                LockSupport.park(this);
+                LockSupport.park(this);// 阻塞当前线程, 等待其他线程唤醒,
                 if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
                     break;
             }

@@ -215,7 +215,7 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
                         return q.poll();//获取队头元素并弹出队
                     first = null; // don't retain ref while waiting
                     if (leader != null)
-                        available.await();
+                        available.await(); //阻塞
                     else {
                         Thread thisThread = Thread.currentThread();
                         leader = thisThread;
@@ -230,7 +230,7 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E>
             }
         } finally {
             if (leader == null && q.peek() != null)//peek 只获取队头元素，
-                available.signal();
+                available.signal();//唤醒
             lock.unlock();
         }
     }
