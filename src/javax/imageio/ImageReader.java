@@ -79,6 +79,8 @@ public abstract class ImageReader {
      */
     protected ImageReaderSpi originatingProvider;
 
+
+
     /**
      * The <code>ImageInputStream</code> or other
      * <code>Object</code> by <code>setInput</code> and retrieved
