@@ -110,9 +110,7 @@ import java.util.ServiceConfigurationError;
  *
  */
 public final class IIORegistry extends ServiceRegistry {
-
-
-
+    //sdaaa
     /**
      * A <code>Vector</code> containing the valid IIO registry
      * categories (superinterfaces) to be used in the constructor.
